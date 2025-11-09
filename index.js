@@ -11,7 +11,7 @@ app.use(express.json());
 // DB_Password = SINbWMGDblb8O8Y1
 
 const uri =
-  "mongodb+srv://community-cleanliness-db:SINbWMGDblb8O8Y1@users.xgs9b3y.mongodb.net/?appName=Users";
+  `mongodb+srv://${process.env.DB_Username}:${process.env.DB_Password}@users.xgs9b3y.mongodb.net/?appName=Users`;
 
 const client = new MongoClient(uri, {
   serverApi: {
