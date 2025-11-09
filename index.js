@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 3000;
@@ -7,11 +8,8 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// DB_Username = community-cleanliness-db
-// DB_Password = SINbWMGDblb8O8Y1
-
 const uri =
-  `mongodb+srv://${process.env.DB_Username}:${process.env.DB_Password}@users.xgs9b3y.mongodb.net/?appName=Users`;
+  `mongodb+srv://${process.env.DB_User}:${process.env.DB_Pass}@users.xgs9b3y.mongodb.net/?appName=Users`;
 
 const client = new MongoClient(uri, {
   serverApi: {
