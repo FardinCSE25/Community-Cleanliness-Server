@@ -28,7 +28,12 @@ async function run() {
     const contributionCollection = db.collection("contributions");
 
     app.get("/issues", async (req, res) => {
-      const cursor = issuesCollection.find();
+      const email = req.query.email;
+      const query = {};
+      if (email) {
+        query.email = email;
+      }
+      const cursor = issuesCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
     });
