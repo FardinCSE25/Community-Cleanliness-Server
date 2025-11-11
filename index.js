@@ -61,19 +61,30 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/issues/:id", async(req, res) =>{
+    app.put("/issues/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id : new ObjectId(id)}
+      const updatedIssueData = req.body;
+      const filter = { _id: new ObjectId(id)};
+      const updatedData = {
+        $set: updatedIssueData
+      }
+      const result = await issuesCollection.updateOne(filter, updatedData);
+      res.send(result);
+    });
+
+    app.delete("/issues/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
       const result = await issuesCollection.deleteOne(query);
       res.send(result);
-    })
+    });
 
-     app.get("/issues/contribution/:id", async (req, res) => {
+    app.get("/issues/contribution/:id", async (req, res) => {
       const id = req.params.id;
-            const cursor = contributionCollection.find({issueId : id})
-            const result = await cursor.toArray();
-            res.send(result);
-     });
+      const cursor = contributionCollection.find({ issueId: id });
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     app.post("/issues", async (req, res) => {
       const newIssue = req.body;
