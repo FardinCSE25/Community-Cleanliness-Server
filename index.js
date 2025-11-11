@@ -63,6 +63,8 @@ async function run() {
 
     app.put("/issues/:id", async (req, res) => {
       const id = req.params.id;
+      console.log(id, req.body);
+      
       const updatedIssueData = req.body;
       const filter = { _id: new ObjectId(id)};
       const updatedData = {
