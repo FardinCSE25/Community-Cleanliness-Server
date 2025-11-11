@@ -61,6 +61,13 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/issues/:id", async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id : new ObjectId(id)}
+      const result = await issuesCollection.deleteOne(query);
+      res.send(result);
+    })
+
      app.get("/issues/contribution/:id", async (req, res) => {
       const id = req.params.id;
             const cursor = contributionCollection.find({issueId : id})
