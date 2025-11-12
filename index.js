@@ -4,9 +4,38 @@ require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
+const admin = require("firebase-admin");
 
 app.use(cors());
 app.use(express.json());
+
+const serviceAccount = require("./community-cleanliness-firebase-adminsdk-fbsvc-5deab6c33c.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+
+const verifyToken = async (req, res, next) =>{
+  if(!req.headers.authorization){
+    return res.status(401).send({message : "Unauthorized Access"})
+  }
+  const token = req.headers.authorization.split(' ')[1]
+  if(!token){
+    return res.status(401).send({message : "Unauthorized Access"})
+  }
+  try{
+    // console.log(token);
+    userInfo = await admin.auth().verifyIdToken(token)
+    req.tokenEmail = userinfo.email
+    console.log(userInfo.email);
+    
+    next()
+  }
+  catch {
+    return res.status(401).send({message : "Unauthorized access"})
+  }
+}
 
 const uri = `mongodb+srv://${process.env.DB_User}:${process.env.DB_Pass}@users.xgs9b3y.mongodb.net/?appName=Users`;
 
@@ -27,11 +56,15 @@ async function run() {
     const issuesCollection = db.collection("issues");
     const contributionCollection = db.collection("contributions");
 
-    app.get("/issues", async (req, res) => {
+    app.get("/issues", verifyToken, async (req, res) => {
+      console.log('headers', req.headers)
       const email = req.query.email;
       const query = {};
       if (email) {
         query.email = email;
+        if(email !== req.tokenEmail){
+          return res.status(403).send({message : "Forbidden Access"})
+        }
       }
       const cursor = issuesCollection.find(query);
       const result = await cursor.toArray();
@@ -54,7 +87,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/issues/:id", async (req, res) => {
+    app.get("/issues/:id",  async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await issuesCollection.findOne(query);
@@ -96,9 +129,12 @@ async function run() {
 
     app.get("/contribution", async (req, res) => {
       const email = req.query.email;
+      console.log(email);
+      
       const query = {};
       if (email) {
         query.email = email;
+        
       }
       const cursor = contributionCollection.find(query);
       const result = await cursor.toArray();
