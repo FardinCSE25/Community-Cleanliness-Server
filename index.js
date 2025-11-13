@@ -8,35 +8,6 @@ const admin = require("firebase-admin");
 
 app.use(cors());
 app.use(express.json());
-
-// const serviceAccount = require("");
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount)
-// });
-
-
-// const verifyToken = async (req, res, next) =>{
-//   if(!req.headers.authorization){
-//     return res.status(401).send({message : "Unauthorized Access"})
-//   }
-//   const token = req.headers.authorization.split(' ')[1]
-//   if(!token){
-//     return res.status(401).send({message : "Unauthorized Access"})
-//   }
-//   try{
-//     // console.log(token);
-//     userInfo = await admin.auth().verifyIdToken(token)
-//     req.tokenEmail = userinfo.email
-//     console.log(userInfo.email);
-    
-//     next()
-//   }
-//   catch {
-//     return res.status(401).send({message : "Unauthorized access"})
-//   }
-// }
-
 const uri = `mongodb+srv://${process.env.DB_User}:${process.env.DB_Pass}@users.xgs9b3y.mongodb.net/?appName=Users`;
 
 const client = new MongoClient(uri, {
